@@ -1,0 +1,161 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Event Connect - Login</title>
+  <style>
+    body {
+      margin: 0;
+      font-family: Arial, sans-serif;
+      background: #f2f2f2;
+      display: flex;
+      flex-direction: column;
+      align-items: center;
+    }
+
+    header {
+      width: 100%;
+      background: #004080;
+      color: white;
+      display: flex;
+      align-items: center;
+      padding: 15px 30px;
+    }
+
+    header img {
+      height: 90px;
+      width:150px;
+      margin-right:15px;
+    }
+
+    header h1 {
+      font-size: 24px;
+      margin: 0;
+    }
+
+    .welcome {
+      margin-top: 50px;
+      font-size: 22px;
+      font-weight: bold;
+      color: #333;
+      text-align: center;
+    }
+
+    .login-box {
+      background: white;
+      padding: 30px;
+      margin-top: 30px;
+      border-radius: 10px;
+      box-shadow: 0px 4px 10px rgba(0,0,0,0.2);
+      width: 300px;
+      text-align: center;
+    }
+
+    .login-box h2 {
+      margin-bottom: 20px;
+      color: #004080;
+    }
+
+    .login-box input {
+      width: 100%;
+      padding: 12px;
+      margin: 10px 0;
+      border: 1px solid #ccc;
+      border-radius: 5px;
+      outline: none;
+    }
+
+    .login-box button {
+      width: 100%;
+      padding: 12px;
+      border: none;
+      border-radius: 5px;
+      background: #004080;
+      color: white;
+      font-size: 16px;
+      cursor: pointer;
+      transition: 0.3s;
+    }
+
+    .login-box button:hover {
+      background: #0066cc;
+    }
+
+    .signup-link {
+      margin-top: 15px;
+      font-size: 14px;
+    }
+
+    .signup-link a {
+      color: #004080;
+      text-decoration: none;
+    }
+  </style>
+</head>
+<body>
+
+  <header>
+    <img src="images/psglog.png" alt="College Logo">
+    <h1><i>PSG COLLEGE OF ARTS & SCIENCE</i></h1>
+  </header>
+
+  <div class="welcome">Welcome to Event Connect</div>
+
+  <div class="login-box">
+    <h2>Login</h2>
+    <form id="loginForm">
+      <input type="email" id="email" placeholder="Enter Email" required>
+      <input type="password" id="password" placeholder="Enter Password" required>
+      <button type="submit">LOGIN</button>
+    </form>
+    <div class="signup-link">
+      Don’t have an account? <a href="signup.html">Sign Up</a>
+    </div>
+  </div>
+
+  <!-- Firebase Scripts -->
+  <script type="module">
+    import { initializeApp } from "https://www.gstatic.com/firebasejs/10.12.5/firebase-app.js";
+    import { getAuth, signInWithEmailAndPassword } from "https://www.gstatic.com/firebasejs/10.12.5/firebase-auth.js";
+
+    const firebaseConfig = {
+      apiKey: "AIzaSyByopsxILHRAh2Ef0nyqyB_s3OjVWJRaag",
+      authDomain: "event-connect-260d4.firebaseapp.com",
+      projectId: "event-connect-260d4",
+      storageBucket: "event-connect-260d4.firebasestorage.app",
+      messagingSenderId: "956039166975",
+      appId: "1:956039166975:web:ba9c84d9e69ae086ca45ca"
+    };
+
+    const app = initializeApp(firebaseConfig);
+    const auth = getAuth(app);
+
+    const loginForm = document.getElementById("loginForm");
+
+    loginForm.addEventListener("submit", (e) => {
+      e.preventDefault();
+
+      const email = document.getElementById("email").value.trim();
+      const password = document.getElementById("password").value.trim();
+
+      // ✅ Admin predefined
+      if (email === "admin@test" && password === "testadmin") {
+        alert("Welcome Admin!");
+        window.location.href = "admindash.html";
+        return;
+      }
+
+      // ✅ Firebase authentication for students
+      signInWithEmailAndPassword(auth, email, password)
+        .then((userCredential) => {
+          alert("Welcome Student!");
+          window.location.href = "studentdash.html";
+        })
+        .catch((error) => {
+          alert("Login failed: " + error.message);
+        });
+    });
+  </script>
+</body>
+</html>

@@ -1,0 +1,291 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Propose Event</title>
+  <!-- Google Fonts -->
+  <link href="https://fonts.googleapis.com/css2?family=Poppins:wght@400;600&display=swap" rel="stylesheet">
+  <style>
+    body {
+      font-family: 'Poppins', sans-serif;
+      background: linear-gradient(135deg, #ece9f7, #f5f3ff);
+      padding: 20px;
+      display: flex;
+      justify-content: center;
+      align-items: center;
+      min-height: 100vh;
+      animation: fadeIn 1s ease-in-out;
+    }
+
+    @keyframes fadeIn {
+      from { opacity: 0; transform: translateY(20px); }
+      to { opacity: 1; transform: translateY(0); }
+    }
+
+    form {
+      background: #ffffff;
+      padding: 35px 30px;
+      border-radius: 15px;
+      box-shadow: 0 15px 40px rgba(0,0,0,0.1);
+      max-width: 600px;
+      width: 100%;
+      transition: transform 0.3s ease;
+    }
+
+    form:hover {
+      transform: translateY(-5px);
+    }
+
+    h2 {
+      text-align: center;
+      color: #4b2e83;
+      margin-bottom: 30px;
+      font-weight: 600;
+    }
+
+    .form-group {
+      position: relative;
+      margin-top: 20px;
+    }
+
+    .form-group input {
+      width: 100%;
+      padding: 14px;
+      border: 1px solid #cfc3eb;
+      border-radius: 8px;
+      outline: none;
+      font-size: 14px;
+      background: #fdfdff;
+      transition: border-color 0.3s, box-shadow 0.3s;
+    }
+
+    .form-group input:focus {
+      border-color: #7d5fff;
+      box-shadow: 0 0 8px rgba(125, 95, 255, 0.4);
+    }
+
+    .form-group label {
+      position: absolute;
+      top: 50%;
+      left: 14px;
+      transform: translateY(-50%);
+      font-size: 14px;
+      color: #7d6edc;
+      pointer-events: none;
+      transition: all 0.3s ease;
+    }
+
+    .form-group input:focus + label,
+    .form-group input:not(:placeholder-shown) + label {
+      top: -8px;
+      left: 10px;
+      font-size: 12px;
+      background: #fff;
+      padding: 0 5px;
+      color: #4b2e83;
+    }
+
+    button {
+      width: 100%;
+      padding: 14px;
+      margin-top: 30px;
+      border: none;
+      border-radius: 10px;
+      background: linear-gradient(135deg, #7d5fff, #5a3fcc);
+      color: white;
+      font-size: 16px;
+      font-weight: 600;
+      cursor: pointer;
+      transition: background 0.3s, transform 0.2s;
+    }
+
+    button:hover {
+      background: linear-gradient(135deg, #5a3fcc, #7d5fff);
+      transform: scale(1.03);
+    }
+
+    small.error {
+      color: #ff3333;
+      display: none;
+      font-size: 12px;
+      margin-top: 5px;
+      padding-left: 5px;
+      animation: shake 0.3s;
+    }
+
+    @keyframes shake {
+      0%, 100% { transform: translateX(0); }
+      20%, 60% { transform: translateX(-5px); }
+      40%, 80% { transform: translateX(5px); }
+    }
+  </style>
+</head>
+<body>
+
+<form id="proposalForm" autocomplete="off">
+  <h2>Propose Event</h2>
+
+  <div class="form-group">
+    <input type="text" id="studentName" placeholder=" " required autocomplete="off">
+    <label for="studentName">Student Name</label>
+  </div>
+
+  <div class="form-group">
+    <input type="text" id="rollNumber" placeholder=" " required autocomplete="off">
+    <label for="rollNumber">Roll Number</label>
+  </div>
+
+  <div class="form-group">
+    <input type="text" id="studentDept" placeholder=" " required autocomplete="off">
+    <label for="studentDept">Department</label>
+  </div>
+
+  <div class="form-group">
+    <input type="email" id="email" placeholder=" " required autocomplete="off">
+    <label for="email">Email</label>
+    <small class="error" id="emailError">Invalid email format</small>
+  </div>
+
+  <div class="form-group">
+    <input type="text" id="contact" placeholder=" " required autocomplete="off">
+    <label for="contact">Phone Number</label>
+    <small class="error" id="contactError">Invalid phone number</small>
+  </div>
+
+  <div class="form-group">
+    <input type="text" id="eventName" placeholder=" " required autocomplete="off">
+    <label for="eventName">Event Name</label>
+  </div>
+
+  <div class="form-group">
+    <input type="text" id="orgDept" placeholder=" " required autocomplete="off">
+    <label for="orgDept">Organizing Department</label>
+  </div>
+
+  <div class="form-group">
+    <input type="date" id="eventDate" required autocomplete="off">
+    <label for="eventDate">Event Date</label>
+  </div>
+
+  <!-- NEW Start Time -->
+  <div class="form-group">
+    <input type="text" id="startTime" placeholder=" " required autocomplete="off">
+    <label for="startTime">Start Time (HH:MM AM/PM)</label>
+  </div>
+
+  <!-- NEW End Time -->
+  <div class="form-group">
+    <input type="text" id="endTime" placeholder=" " required autocomplete="off">
+    <label for="endTime">End Time (HH:MM AM/PM)</label>
+  </div>
+
+  <!-- add this inside <form> (after endTime, before lastDate) -->
+<div class="form-group">
+  <input type="text" id="venue" placeholder=" " required autocomplete="off">
+  <label for="venue">Venue</label>
+</div>
+
+  <div class="form-group">
+    <input type="date" id="lastDate" required autocomplete="off">
+    <label for="lastDate">Last Date for Registration</label>
+  </div>
+
+  <div class="form-group">
+    <input type="url" id="regLink" placeholder=" " required autocomplete="off">
+    <label for="regLink">Registration Link</label>
+  </div>
+
+  <div class="form-group">
+    <input type="file" id="poster" accept="image/*" required autocomplete="off">
+    <label for="poster">Event Poster (JPG/PNG)</label>
+  </div>
+
+  <button type="submit">Submit Proposal</button>
+</form>
+
+<script type="module">
+import { initializeApp } from "https://www.gstatic.com/firebasejs/10.7.0/firebase-app.js";
+import { getDatabase, ref, push, set } from "https://www.gstatic.com/firebasejs/10.7.0/firebase-database.js";
+
+const firebaseConfig = {
+  apiKey: "AIzaSyByopsxILHRAh2Ef0nyqyB_s3OjVWJRaag",
+  authDomain: "event-connect-260d4.firebaseapp.com",
+  databaseURL: "https://event-connect-260d4-default-rtdb.asia-southeast1.firebasedatabase.app/",
+  projectId: "event-connect-260d4",
+  storageBucket: "event-connect-260d4.appspot.com",
+  messagingSenderId: "956039166975",
+  appId: "1:956039166975:web:ba9c84d9e69ae086ca45ca"
+};
+
+const app = initializeApp(firebaseConfig);
+const db = getDatabase(app);
+
+const proposalForm = document.getElementById("proposalForm");
+
+proposalForm.addEventListener("submit", (e) => {
+  e.preventDefault();
+
+  const emailInput = document.getElementById("email");
+  const contactInput = document.getElementById("contact");
+  const emailError = document.getElementById("emailError");
+  const contactError = document.getElementById("contactError");
+
+  let valid = true;
+
+  const emailPattern = /^[^\s@]+@[^\s@]+\.[^\s@]+$/;
+  if(!emailPattern.test(emailInput.value)){
+    emailError.style.display = "block";
+    valid = false;
+  } else { emailError.style.display = "none"; }
+
+  const phonePattern = /^[0-9]{10}$/;
+  if(!phonePattern.test(contactInput.value)){
+    contactError.style.display = "block";
+    valid = false;
+  } else { contactError.style.display = "none"; }
+
+  if(!valid) return;
+
+  const posterFile = document.getElementById("poster").files[0];
+  if(!posterFile) { alert("Please upload a poster."); return; }
+
+  const reader = new FileReader();
+  reader.onload = function() {
+    const base64Poster = reader.result;
+    const proposal = {
+      studentName: document.getElementById("studentName").value,
+      rollNumber: document.getElementById("rollNumber").value,
+      studentDept: document.getElementById("studentDept").value,
+      email: emailInput.value,
+      contact: contactInput.value,
+      eventName: document.getElementById("eventName").value,
+      orgDept: document.getElementById("orgDept").value,
+      eventDate: document.getElementById("eventDate").value,
+      startTime: document.getElementById("startTime").value,
+      endTime: document.getElementById("endTime").value,
+      venue: document.getElementById("venue").value,
+      lastDate: document.getElementById("lastDate").value,
+      regLink: document.getElementById("regLink").value,
+      poster: base64Poster,
+      status: "pending",
+      timestamp: Date.now()
+    };
+
+    set(push(ref(db, "proposals")), proposal)
+      .then(() => {
+        alert("✅ Submission Successful!");
+        proposalForm.reset();
+        window.location.href = "studentdash.html";
+      })
+      .catch((err) => {
+        alert("❌ Error: " + err.message);
+        console.error(err);
+      });
+  };
+  reader.readAsDataURL(posterFile);
+});
+</script>
+
+</body>
+</html>

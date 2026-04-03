@@ -1,0 +1,161 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Event Connect - Sign Up</title>
+  <style>
+    body {
+      margin: 0;
+      font-family: Arial, sans-serif;
+      background: #f2f2f2;
+      display: flex;
+      flex-direction: column;
+      align-items: center;
+    }
+
+    /* Header */
+    header {
+      width: 100%;
+      background: #004080;
+      color: white;
+      display: flex;
+      align-items: center;
+      padding: 15px 30px;
+    }
+
+    header img {
+      height: 90px;
+      width:150px;
+      margin-right:15px;
+    }
+
+    header h1 {
+      font-size: 24px;
+      margin: 0;
+    }
+
+    /* Welcome message */
+    .welcome {
+      margin-top: 50px;
+      font-size: 22px;
+      font-weight: bold;
+      color: #333;
+      text-align: center;
+    }
+
+    /* Signup box */
+    .signup-box {
+      background: white;
+      padding: 30px;
+      margin-top: 30px;
+      border-radius: 10px;
+      box-shadow: 0px 4px 10px rgba(0,0,0,0.2);
+      width: 300px;
+      text-align: center;
+    }
+
+    .signup-box h2 {
+      margin-bottom: 20px;
+      color: #004080;
+    }
+
+    .signup-box input {
+      width: 100%;
+      padding: 12px;
+      margin: 10px 0;
+      border: 1px solid #ccc;
+      border-radius: 5px;
+      outline: none;
+    }
+
+    .signup-box button {
+      width: 100%;
+      padding: 12px;
+      border: none;
+      border-radius: 5px;
+      background: #004080;
+      color: white;
+      font-size: 16px;
+      cursor: pointer;
+      transition: 0.3s;
+    }
+
+    .signup-box button:hover {
+      background: #0066cc;
+    }
+
+    .login-link {
+      margin-top: 15px;
+      font-size: 14px;
+    }
+
+    .login-link a {
+      color: #004080;
+      text-decoration: none;
+    }
+  </style>
+</head>
+<body>
+
+  <!-- Header -->
+  <header>
+   <img src="images/psglog.png" alt="College Logo">
+    <h1><i>PSG COLLEGE OF ARTS & SCIENCE</i></h1>
+  </header>
+
+  <!-- Welcome message -->
+  <div class="welcome">Join Event Connect</div>
+
+  <!-- Signup box -->
+  <div class="signup-box">
+    <h2>Create Account</h2>
+    <form id="signupForm">
+      <input type="email" id="signupEmail" placeholder="Enter Email" required>
+      <input type="password" id="signupPassword" placeholder="Enter Password" required>
+      <button type="submit">Sign Up</button>
+    </form>
+    <div class="login-link">
+      Already have an account? <a href="login.html">Login</a>
+    </div>
+  </div>
+
+  <!-- Firebase Scripts -->
+  <script type="module">
+    import { initializeApp } from "https://www.gstatic.com/firebasejs/10.12.5/firebase-app.js";
+    import { getAuth, createUserWithEmailAndPassword } from "https://www.gstatic.com/firebasejs/10.12.5/firebase-auth.js";
+
+    // Your Firebase config
+    const firebaseConfig = {
+      apiKey: "AIzaSyByopsxILHRAh2Ef0nyqyB_s3OjVWJRaag",
+      authDomain: "event-connect-260d4.firebaseapp.com",
+      projectId: "event-connect-260d4",
+      storageBucket: "event-connect-260d4.firebasestorage.app",
+      messagingSenderId: "956039166975",
+      appId: "1:956039166975:web:ba9c84d9e69ae086ca45ca"
+    };
+
+    // Initialize Firebase
+    const app = initializeApp(firebaseConfig);
+    const auth = getAuth(app);
+
+    // Handle sign up
+    const signupForm = document.getElementById("signupForm");
+    signupForm.addEventListener("submit", (e) => {
+      e.preventDefault();
+
+      const email = document.getElementById("signupEmail").value;
+      const password = document.getElementById("signupPassword").value;
+
+      createUserWithEmailAndPassword(auth, email, password)
+        .then((userCredential) => {
+          alert("🎉 Account created successfully! Please log in.");
+          window.location.href = "login.html"; // Redirect to login
+        })
+        .catch((error) => {
+          alert("Error: " + error.message);
+        });
+    });
+  </script>
+</body>
+</html>

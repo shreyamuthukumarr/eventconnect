@@ -1,0 +1,430 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Student Dashboard - Event Connect</title>
+<style>
+body {
+  margin: 0;
+  font-family: Arial, sans-serif;
+  background: #f4f6f9;
+  display: flex;
+  flex-direction: column;
+  height: 100vh;
+}
+header {
+  background: #004080;
+  color: white;
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  padding: 10px 20px;
+}
+.header-left {
+  display: flex;
+  align-items: center;
+}
+header img.logo {
+  height: 60px;
+  margin-right: 15px;
+}
+header h1 {
+  font-size: 20px;
+  margin: 0;
+}
+.header-right {
+  display: flex;
+  align-items: center;
+  gap: 10px;
+}
+.propose-btn {
+  background: #ffcc00;
+  color: #004080;
+  font-weight: bold;
+  padding: 10px 18px;
+  border: none;
+  border-radius: 8px;
+  cursor: pointer;
+  font-size: 15px;
+  transition: 0.3s;
+}
+.propose-btn:hover {
+  background: #ffdb4d;
+}
+.profile-container {
+  position: relative;
+}
+.profile-icon {
+  width: 40px;
+  height: 40px;
+  border-radius: 50%;
+  background: white;
+  color: #004080;
+  font-weight: bold;
+  display: flex;
+  justify-content: center;
+  align-items: center;
+  cursor: pointer;
+}
+.profile-dropdown {
+  display: none;
+  position: absolute;
+  top: 50px;
+  right: 0;
+  background: white;
+  color: #004080;
+  border-radius: 8px;
+  min-width: 150px;
+  box-shadow: 0 4px 10px rgba(0,0,0,0.1);
+  flex-direction: column;
+}
+.profile-dropdown p, .profile-dropdown button {
+  margin: 0;
+  padding: 10px 15px;
+  border: none;
+  background: none;
+  text-align: left;
+  cursor: pointer;
+}
+.profile-dropdown p {
+  font-weight: bold;
+}
+.profile-dropdown button:hover {
+  background: #f0f0f0;
+}
+
+.container {
+  display: flex;
+  flex: 1;
+}
+.sidebar {
+  width: 220px;
+  background: #00264d;
+  color: white;
+  padding-top: 20px;
+  display: flex;
+  flex-direction: column;
+  position: relative;
+}
+.sidebar button {
+  background: none;
+  border: none;
+  padding: 15px;
+  text-align: left;
+  font-size: 16px;
+  color: white;
+  cursor: pointer;
+  width: 100%;
+  transition: background 0.3s;
+}
+.sidebar button:hover {
+  background: #004080;
+}
+
+/* Scrollable dropdown (always downwards) */
+.dropdown {
+  display: none;
+  flex-direction: column;
+  background: #004080;
+  position: absolute;
+  left: 0;
+  top: 55px;
+  width: 100%;
+  z-index: 10;
+  max-height: 250px;
+  overflow-y: auto;
+  border-radius: 0 0 8px 8px;
+}
+.dropdown button {
+  padding: 10px 15px;
+  font-size: 14px;
+  text-align: left;
+  color: white;
+  background: none;
+  border: none;
+}
+.dropdown button:hover {
+  background: #0066cc;
+}
+
+.main {
+  flex: 1;
+  padding: 20px;
+  overflow-y: auto;
+}
+.main h2 {
+  color: #004080;
+}
+
+/* Event grid */
+#eventsList {
+  display: grid;
+  grid-template-columns: repeat(auto-fill, minmax(320px, 1fr));
+  gap: 20px;
+}
+
+/* Event Card */
+.card-wrapper {
+  position: relative;
+}
+.card {
+  background: white;
+  border-radius: 12px;
+  box-shadow: 0 4px 10px rgba(0,0,0,0.1);
+  overflow: hidden;
+  display: flex;
+  flex-direction: column;
+  transition: transform 0.2s;
+  cursor: pointer;
+}
+.card:hover {
+  transform: translateY(-5px);
+}
+.card img {
+  width: 100%;
+  height: 200px;
+  object-fit: cover;
+}
+.card-content {
+  padding: 15px;
+}
+.card-content h3 {
+  margin: 0 0 8px;
+  font-size: 18px;
+  color: #004080;
+}
+.card-content p {
+  margin: 4px 0;
+  font-size: 14px;
+  color: #333;
+}
+
+/* Status Tag */
+.status-tag {
+  position: absolute;
+  top: 10px;
+  right: 10px;
+  background: green;
+  color: white;
+  font-size: 12px;
+  padding: 5px 10px;
+  border-radius: 20px;
+  font-weight: bold;
+}
+
+/* Modal */
+.modal {
+  display: none;
+  position: fixed;
+  top:0;
+  left:0;
+  width:100%;
+  height:100%;
+  background: rgba(0,0,0,0.6);
+  justify-content: center;
+  align-items: center;
+  z-index: 1000;
+}
+.modal-content {
+  background: white;
+  padding: 20px;
+  width: 90%;
+  max-width: 600px;
+  border-radius: 10px;
+  max-height: 90%;
+  overflow-y: auto;
+  position: relative;
+}
+.close-btn {
+  position: absolute;
+  top: 10px;
+  right: 10px;
+  font-size: 18px;
+  cursor: pointer;
+  color: #004080;
+  padding: 5px 10px;
+  border-radius: 5px;
+  background: #f0f0f0;
+}
+.modal-content img {
+  max-width: 100%;
+  border-radius: 6px;
+  margin-bottom: 10px;
+}
+</style>
+</head>
+<body>
+
+<header>
+  <div class="header-left">
+    <img src="images/psglog.png" alt="College Logo" class="logo">
+    <h1>PSG College of Arts & Science - Student Dashboard</h1>
+  </div>
+  <div class="header-right">
+    <button class="propose-btn" onclick="window.location.href='propose.html'">+ Propose Event</button>
+    <div class="profile-container">
+      <div class="profile-icon" id="profileIcon">S</div>
+      <div class="profile-dropdown" id="profileDropdown">
+        <p id="userName">Student Name</p>
+        <button onclick="logout()">Logout</button>
+      </div>
+    </div>
+  </div>
+</header>
+
+<div class="container">
+  <div class="sidebar">
+    <button id="viewEventsBtn">📅 View Events ▼</button>
+    <div class="dropdown" id="eventsDropdown"></div>
+  </div>
+  <div class="main" id="mainContent">
+    <h2>Upcoming Events</h2>
+    <div id="eventsList"><p>Loading events...</p></div>
+  </div>
+</div>
+
+<div class="modal" id="eventModal">
+  <div class="modal-content" id="modalContent">
+    <span class="close-btn" onclick="closeModal()">&times;</span>
+    <div id="modalDetails"></div>
+  </div>
+</div>
+
+<script type="module">
+import { initializeApp } from "https://www.gstatic.com/firebasejs/10.7.0/firebase-app.js";
+import { getDatabase, ref, onValue } from "https://www.gstatic.com/firebasejs/10.7.0/firebase-database.js";
+
+const firebaseConfig = {
+  apiKey: "AIzaSyByopsxILHRAh2Ef0nyqyB_s3OjVWJRaag",
+  authDomain: "event-connect-260d4.firebaseapp.com",
+  databaseURL: "https://event-connect-260d4-default-rtdb.asia-southeast1.firebasedatabase.app/",
+  projectId: "event-connect-260d4",
+  storageBucket: "event-connect-260d4.appspot.com",
+  messagingSenderId: "956039166975",
+  appId: "1:956039166975:web:ba9c84d9e69ae086ca45ca"
+};
+
+const app = initializeApp(firebaseConfig);
+const db = getDatabase(app);
+
+const eventsList = document.getElementById("eventsList");
+const modal = document.getElementById("eventModal");
+const modalDetails = document.getElementById("modalDetails");
+const dropdown = document.getElementById("eventsDropdown");
+const viewEventsBtn = document.getElementById("viewEventsBtn");
+const profileIcon = document.getElementById("profileIcon");
+const profileDropdown = document.getElementById("profileDropdown");
+const userNameElem = document.getElementById("userName");
+
+// Demo user info
+const currentUser = { name: "Shreya" };
+userNameElem.textContent = currentUser.name;
+profileIcon.textContent = currentUser.name[0].toUpperCase();
+
+function loadEvents() {
+  eventsList.innerHTML = "<p>Loading events...</p>";
+  const eventsRef = ref(db, "approvedEvents");
+
+  onValue(eventsRef, (snapshot) => {
+    eventsList.innerHTML = "";
+    dropdown.innerHTML = "";
+
+    if (!snapshot.exists()) {
+      eventsList.innerHTML = "<p>No approved events yet</p>";
+      return;
+    }
+
+    snapshot.forEach((child) => {
+      const event = child.val();
+
+      // Wrapper with tag
+      const cardWrapper = document.createElement("div");
+      cardWrapper.className = "card-wrapper";
+
+      const statusTag = document.createElement("div");
+      statusTag.className = "status-tag";
+
+      const today = new Date();
+      const eventDate = new Date(event.eventDate);
+      if (eventDate >= today) {
+        statusTag.textContent = "Upcoming";
+        statusTag.style.background = "green";
+      } else {
+        statusTag.textContent = "Completed";
+        statusTag.style.background = "gray";
+      }
+      cardWrapper.appendChild(statusTag);
+
+      // Event Card
+      const card = document.createElement("div");
+      card.className = "card";
+
+      const img = document.createElement("img");
+      img.src = event.poster || "images/default-poster.jpg";
+      card.appendChild(img);
+
+      const content = document.createElement("div");
+      content.className = "card-content";
+      content.innerHTML = `
+        <h3>${event.eventName}</h3>
+        <p><strong>Dept:</strong> ${event.orgDept}</p>
+        <p><strong>Date:</strong> ${event.eventDate}</p>
+        <p><strong>Start:</strong> ${event.startTime} | <strong>End:</strong> ${event.endTime}</p>
+        <p><strong>Venue:</strong> ${event.venue}</p>
+        <p><strong>Last Date:</strong> ${event.lastDate}</p>
+        <p><a href="${event.regLink}" target="_blank">🔗 Register Here</a></p>
+      `;
+      card.appendChild(content);
+
+      card.addEventListener("click", () => showModal(event));
+
+      cardWrapper.appendChild(card);
+      eventsList.appendChild(cardWrapper);
+
+      // Dropdown item
+      const dropBtn = document.createElement("button");
+      dropBtn.textContent = event.eventName;
+      dropBtn.addEventListener("click", () => showModal(event));
+      dropdown.appendChild(dropBtn);
+    });
+  });
+}
+
+function showModal(event) {
+  modalDetails.innerHTML = `
+    <h3>${event.eventName}</h3>
+    <p><strong>Date:</strong> ${event.eventDate}</p>
+    <p><strong>Start:</strong> ${event.startTime} | <strong>End:</strong> ${event.endTime}</p>
+    <p><strong>Organizing Dept:</strong> ${event.orgDept}</p>
+    <p><strong>Venue:</strong> ${event.venue}</p>
+    <p><strong>Last Date to Register:</strong> ${event.lastDate}</p>
+    <p><a href="${event.regLink}" target="_blank">🔗 Registration Link</a></p>
+    <img src="${event.poster}" alt="Poster">
+  `;
+  modal.style.display = "flex";
+}
+
+window.closeModal = function() {
+  modal.style.display = "none";
+};
+
+// Sidebar dropdown toggle
+viewEventsBtn.addEventListener("click", () => {
+  dropdown.style.display = dropdown.style.display === "flex" ? "none" : "flex";
+});
+
+// Profile dropdown toggle
+profileIcon.addEventListener("click", () => {
+  profileDropdown.style.display = profileDropdown.style.display === "flex" ? "none" : "flex";
+});
+
+window.logout = function() {
+  alert("Logged out successfully!");
+  window.location.href = "login.html";
+}
+
+loadEvents();
+</script>
+</body>
+</html>

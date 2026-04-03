@@ -1,0 +1,402 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Admin Dashboard - Event Connect</title>
+<style>
+body {
+  margin: 0;
+  font-family: Arial, sans-serif;
+  background: #f4f6f9;
+  display: flex;
+  flex-direction: column;
+  height: 100vh;
+}
+header {
+  background: #004080;
+  color: white;
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  padding: 10px 20px;
+}
+.header-left {
+  display: flex;
+  align-items: center;
+}
+header img {
+  height: 60px;
+  margin-right: 15px;
+}
+header h1 {
+  font-size: 20px;
+  margin: 0;
+}
+.logout-btn {
+  background: #ff4d4d;
+  color: white;
+  padding: 8px 12px;
+  border: none;
+  border-radius: 5px;
+  cursor: pointer;
+}
+.logout-btn:hover {
+  background: #e60000;
+}
+
+.container {
+  display: flex;
+  flex: 1;
+}
+.sidebar {
+  width: 220px;
+  background: #00264d;
+  color: white;
+  padding-top: 20px;
+  display: flex;
+  flex-direction: column;
+  position: relative;
+}
+.sidebar button {
+  background: none;
+  border: none;
+  padding: 15px;
+  text-align: left;
+  font-size: 16px;
+  color: white;
+  cursor: pointer;
+  width: 100%;
+  transition: background 0.3s;
+}
+.sidebar button:hover {
+  background: #004080;
+}
+
+.dropdown {
+  display: none;
+  flex-direction: column;
+  background: #004080;
+  width: 100%;
+  z-index: 10;
+}
+.dropdown button {
+  padding: 10px 15px;
+  font-size: 14px;
+  text-align: left;
+  color: white;
+}
+.dropdown button:hover {
+  background: #0066cc;
+}
+.dropdown p {
+  padding: 10px 15px;
+  font-size: 14px;
+  color: white;
+  margin: 0;
+}
+
+.main {
+  flex: 1;
+  padding: 20px;
+  overflow-y: auto;
+}
+.main h2 {
+  color: #004080;
+}
+.card {
+  background: white;
+  padding: 15px;
+  margin: 10px 0;
+  border-radius: 8px;
+  box-shadow: 0 4px 10px rgba(0,0,0,0.1);
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+}
+.card img {
+  max-width: 300px;
+  border-radius: 6px;
+  margin-bottom: 15px;
+}
+.card-details {
+  width: 100%;
+}
+.card button {
+  padding: 8px 12px;
+  margin-right: 10px;
+  border: none;
+  border-radius: 5px;
+  cursor: pointer;
+  color: white;
+}
+.accept-btn {
+  background: #28a745;
+}
+.accept-btn:hover {
+  background: #218838;
+}
+.reject-btn {
+  background: #dc3545;
+}
+.reject-btn:hover {
+  background: #c82333;
+}
+</style>
+</head>
+<body>
+
+<header>
+  <div class="header-left">
+    <img src="images/psglog.png" alt="College Logo">
+    <h1>Admin Dashboard - Event Connect</h1>
+  </div>
+  <button class="logout-btn" onclick="logout()">Logout</button>
+</header>
+
+<div class="container">
+  <div class="sidebar">
+    <button id="viewProposalsBtn"> View Proposals ▼</button>
+    <div class="dropdown" id="proposalsDropdown"></div>
+
+    <button id="viewAcceptedBtn"> Accepted Events ▼</button>
+    <div class="dropdown" id="acceptedDropdown"></div>
+
+    <button id="viewRejectedBtn"> Rejected Events ▼</button>
+    <div class="dropdown" id="rejectedDropdown"></div>
+  </div>
+
+  <div class="main">
+    <h2 id="sectionHeading">Pending Events</h2>
+    <div id="eventsList"><p>Loading pending events...</p></div>
+  </div>
+</div>
+
+<script type="module">
+import { initializeApp } from "https://www.gstatic.com/firebasejs/10.7.0/firebase-app.js";
+import { getDatabase, ref, onValue, set, push, remove } from "https://www.gstatic.com/firebasejs/10.7.0/firebase-database.js";
+
+const firebaseConfig = {
+  apiKey: "AIzaSyByopsxILHRAh2Ef0nyqyB_s3OjVWJRaag",
+  authDomain: "event-connect-260d4.firebaseapp.com",
+  databaseURL: "https://event-connect-260d4-default-rtdb.asia-southeast1.firebasedatabase.app/",
+  projectId: "event-connect-260d4",
+  storageBucket: "event-connect-260d4.appspot.com",
+  messagingSenderId: "956039166975",
+  appId: "1:956039166975:web:ba9c84d9e69ae086ca45ca"
+};
+
+const app = initializeApp(firebaseConfig);
+const db = getDatabase(app);
+
+const proposalsDropdown = document.getElementById("proposalsDropdown");
+const acceptedDropdown = document.getElementById("acceptedDropdown");
+const rejectedDropdown = document.getElementById("rejectedDropdown");
+const mainContent = document.getElementById("eventsList");
+const sectionHeading = document.getElementById("sectionHeading");
+
+let proposalsData = [];
+let acceptedData = [];
+let rejectedData = [];
+
+// Load proposals
+function loadProposals() {
+  const proposalsRef = ref(db, "proposals");
+  onValue(proposalsRef, snapshot => {
+    proposalsDropdown.innerHTML = "";
+    mainContent.innerHTML = "";
+    proposalsData = [];
+
+    if (!snapshot.exists()) {
+      proposalsDropdown.innerHTML = "<p>No proposals</p>";
+      mainContent.innerHTML = "<p>No pending events</p>";
+      return;
+    }
+
+    snapshot.forEach(child => {
+      const proposal = { key: child.key, ...child.val() };
+      proposalsData.push(proposal);
+
+      const dropBtn = document.createElement("button");
+      dropBtn.textContent = proposal.eventName;
+      dropBtn.addEventListener("click", () => {
+        sectionHeading.textContent = "Pending Events";
+        showProposalCard(proposal);
+      });
+      proposalsDropdown.appendChild(dropBtn);
+    });
+
+    // Show first proposal by default
+    sectionHeading.textContent = "Pending Events";
+    showProposalCard(proposalsData[0]);
+  });
+}
+
+// Load accepted events
+function loadAccepted() {
+  const acceptedRef = ref(db, "approvedEvents");
+  onValue(acceptedRef, snapshot => {
+    acceptedDropdown.innerHTML = "";
+    acceptedData = [];
+
+    if (!snapshot.exists()) {
+      acceptedDropdown.innerHTML = "<p>No accepted events</p>";
+      return;
+    }
+
+    snapshot.forEach(child => {
+      const event = { key: child.key, ...child.val() };
+      acceptedData.push(event);
+
+      const dropBtn = document.createElement("button");
+      dropBtn.textContent = event.eventName;
+      dropBtn.addEventListener("click", () => {
+        sectionHeading.textContent = "Accepted Events";
+        showAcceptedCard(event);
+      });
+      acceptedDropdown.appendChild(dropBtn);
+    });
+  });
+}
+
+// Load rejected events
+function loadRejected() {
+  const rejectedRef = ref(db, "rejectedEvents");
+  onValue(rejectedRef, snapshot => {
+    rejectedDropdown.innerHTML = "";
+    rejectedData = [];
+
+    if (!snapshot.exists()) {
+      rejectedDropdown.innerHTML = "<p>No rejected events</p>";
+      return;
+    }
+
+    snapshot.forEach(child => {
+      const event = { key: child.key, ...child.val() };
+      rejectedData.push(event);
+
+      const dropBtn = document.createElement("button");
+      dropBtn.textContent = event.eventName;
+      dropBtn.addEventListener("click", () => {
+        sectionHeading.textContent = "Rejected Events";
+        showRejectedCard(event);
+      });
+      rejectedDropdown.appendChild(dropBtn);
+    });
+  });
+}
+
+// Show proposal
+function showProposalCard(event) {
+  if (!event) {
+    mainContent.innerHTML = "<p>No pending events</p>";
+    return;
+  }
+
+  mainContent.innerHTML = `
+    <div class="card">
+      <img src="${event.poster}" alt="Poster">
+      <div class="card-details">
+        <h3>${event.eventName}</h3>
+        <p><strong>Student:</strong> ${event.studentName} (${event.rollNumber})</p>
+        <p><strong>Student Dept:</strong> ${event.studentDept}</p>
+        <p><strong>Organizing Dept:</strong> ${event.orgDept}</p>
+        <p><strong>Date:</strong> ${event.eventDate}</p>
+        <p><strong>Time:</strong> ${event.startTime} - ${event.endTime}</p>
+        <p><strong>Venue:</strong> ${event.venue}</p>
+        <p><strong>Description:</strong> ${event.description}</p>
+        <button class="accept-btn" onclick="acceptEvent('${event.key}')">Accept</button>
+        <button class="reject-btn" onclick="rejectEvent('${event.key}')">Reject</button>
+      </div>
+    </div>
+  `;
+}
+
+// Show accepted event
+function showAcceptedCard(event) {
+  if (!event) {
+    mainContent.innerHTML = "<p>No accepted events</p>";
+    return;
+  }
+
+  mainContent.innerHTML = `
+    <div class="card">
+      <img src="${event.poster}" alt="Poster">
+      <div class="card-details">
+        <h3>${event.eventName}</h3>
+        <p><strong>Student:</strong> ${event.studentName} (${event.rollNumber})</p>
+        <p><strong>Student Dept:</strong> ${event.studentDept}</p>
+        <p><strong>Organizing Dept:</strong> ${event.orgDept}</p>
+        <p><strong>Date:</strong> ${event.eventDate}</p>
+        <p><strong>Time:</strong> ${event.startTime} - ${event.endTime}</p>
+        <p><strong>Venue:</strong> ${event.venue}</p>
+        <p><strong>Description:</strong> ${event.description}</p>
+        <p><strong>Status:</strong> ✅ Approved</p>
+      </div>
+    </div>
+  `;
+}
+
+// Show rejected event
+function showRejectedCard(event) {
+  if (!event) {
+    mainContent.innerHTML = "<p>No rejected events</p>";
+    return;
+  }
+
+  mainContent.innerHTML = `
+    <div class="card">
+      <img src="${event.poster}" alt="Poster">
+      <div class="card-details">
+        <h3>${event.eventName}</h3>
+        <p><strong>Student:</strong> ${event.studentName} (${event.rollNumber})</p>
+        <p><strong>Student Dept:</strong> ${event.studentDept}</p>
+        <p><strong>Organizing Dept:</strong> ${event.orgDept}</p>
+        <p><strong>Date:</strong> ${event.eventDate}</p>
+        <p><strong>Time:</strong> ${event.startTime} - ${event.endTime}</p>
+        <p><strong>Venue:</strong> ${event.venue}</p>
+        <p><strong>Description:</strong> ${event.description}</p>
+        <p><strong>Status:</strong> ❌ Rejected</p>
+      </div>
+    </div>
+  `;
+}
+
+// Accept / Reject
+window.acceptEvent = function(key) {
+  const proposal = proposalsData.find(p => p.key === key);
+  if (!proposal) return;
+  const approvedRef = push(ref(db, "approvedEvents"));
+  set(approvedRef, proposal).then(() => remove(ref(db, `proposals/${key}`)));
+}
+
+window.rejectEvent = function(key) {
+  const proposal = proposalsData.find(p => p.key === key);
+  if (!proposal) return;
+  const rejectedRef = push(ref(db, "rejectedEvents"));
+  set(rejectedRef, proposal).then(() => remove(ref(db, `proposals/${key}`)));
+}
+
+// Dropdown toggles
+document.getElementById("viewProposalsBtn").addEventListener("click", () => {
+  proposalsDropdown.style.display = proposalsDropdown.style.display === "flex" ? "none" : "flex";
+});
+document.getElementById("viewAcceptedBtn").addEventListener("click", () => {
+  acceptedDropdown.style.display = acceptedDropdown.style.display === "flex" ? "none" : "flex";
+});
+document.getElementById("viewRejectedBtn").addEventListener("click", () => {
+  rejectedDropdown.style.display = rejectedDropdown.style.display === "flex" ? "none" : "flex";
+});
+
+window.logout = function() {
+  alert("Logged out successfully!");
+  window.location.href = "login.html";
+}
+
+// Initial load
+loadProposals();
+loadAccepted();
+loadRejected();
+</script>
+</body>
+</html>

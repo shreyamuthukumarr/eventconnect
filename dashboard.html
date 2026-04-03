@@ -1,0 +1,180 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Event Connect - Dashboard</title>
+
+  <!-- Google Fonts -->
+  <link href="https://fonts.googleapis.com/css2?family=Playfair+Display:wght@600&family=Poppins:wght@400;600&display=swap" rel="stylesheet">
+
+  <style>
+    /* Reset */
+    * {
+      margin: 0;
+      padding: 0;
+      box-sizing: border-box;
+    }
+
+    body {
+      font-family: 'Poppins', sans-serif;
+      background: linear-gradient(to bottom right, #f3e8ff, #e9d5ff);
+      color: #333;
+      display: flex;
+      flex-direction: column;
+      min-height: 100vh;
+    }
+
+    /* Header */
+    header {
+      background: #6b46c1;
+      color: white;
+      display: flex;
+      align-items: center;
+      padding: 15px 30px;
+      box-shadow: 0px 4px 10px rgba(0,0,0,0.2);
+    }
+
+    header img {
+      height: 70px;
+      width: auto;
+      margin-right: 15px;
+      border-radius: 8px;
+    }
+
+    header h1 {
+      font-size: 22px;
+      font-weight: 600;
+      letter-spacing: 1px;
+      font-family: 'Poppins', sans-serif;
+    }
+
+    /* Hero Section */
+    .hero {
+      flex: 1;
+      display: flex;
+      flex-direction: column;
+      justify-content: center;
+      align-items: center;
+      text-align: center;
+      padding: 50px 20px;
+    }
+
+    .hero h2 {
+      font-size: 50px;
+      color: #4c1d95;
+      margin-bottom: 15px;
+      font-family: 'Playfair Display', serif;
+      animation: fadeInDown 1.2s ease-out;
+    }
+
+    .hero p {
+      font-size: 18px;
+      max-width: 600px;
+      color: #4a4a4a;
+      margin-bottom: 40px;
+      animation: fadeInUp 1.5s ease-out;
+    }
+
+    /* Buttons */
+    .btn-group {
+      display: flex;
+      gap: 20px;
+      animation: fadeInUp 2s ease-out;
+    }
+
+    .btn {
+      padding: 12px 24px;
+      font-size: 16px;
+      border: none;
+      border-radius: 30px;
+      cursor: pointer;
+      transition: transform 0.2s, background 0.3s;
+      box-shadow: 0 4px 10px rgba(0,0,0,0.15);
+      font-family: 'Poppins', sans-serif;
+    }
+
+    .btn-login {
+      background: #6b46c1;
+      color: white;
+    }
+
+    .btn-login:hover {
+      background: #553c9a;
+      transform: scale(1.05);
+    }
+
+    .btn-signup {
+      background: white;
+      color: #6b46c1;
+      border: 2px solid #6b46c1;
+    }
+
+    .btn-signup:hover {
+      background: #ede9fe;
+      transform: scale(1.05);
+    }
+
+    /* Animations */
+    @keyframes fadeInDown {
+      from {
+        opacity: 0;
+        transform: translateY(-30px);
+      }
+      to {
+        opacity: 1;
+        transform: translateY(0);
+      }
+    }
+
+    @keyframes fadeInUp {
+      from {
+        opacity: 0;
+        transform: translateY(30px);
+      }
+      to {
+        opacity: 1;
+        transform: translateY(0);
+      }
+    }
+
+    /* Footer */
+    footer {
+      text-align: center;
+      padding: 15px;
+      background: #6b46c1;
+      color: white;
+      font-size: 14px;
+      font-family: 'Poppins', sans-serif;
+    }
+  </style>
+</head>
+<body>
+
+  <!-- Header -->
+  <header>
+    <img src="images/psglog.png" alt="College Logo">
+    <h1>PSG College of Arts & Science</h1>
+  </header>
+
+  <!-- Hero Section -->
+  <section class="hero">
+    <h2>Event Connect</h2>
+    <p>
+      Event Connect is your one-stop platform to propose, explore, and manage
+      campus events. Designed to connect students and organizers seamlessly,
+      making event participation easier than ever.
+    </p>
+    <div class="btn-group">
+      <button class="btn btn-login" onclick="window.location.href='login.html'">Login</button>
+      <button class="btn btn-signup" onclick="window.location.href='signup.html'">Sign Up</button>
+    </div>
+  </section>
+
+  <!-- Footer -->
+  <footer>
+    © 2025 PSG College of Arts & Science | Event Connect
+  </footer>
+
+</body>
+</html>
